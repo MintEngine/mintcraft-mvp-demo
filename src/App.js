@@ -1,4 +1,4 @@
-import React, { useState, createRef } from 'react';
+import React, { useState, createRef, useEffect } from 'react';
 import { Container, Dimmer, Loader, Grid, Sticky, Message } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 import {
@@ -10,23 +10,14 @@ import { makeStyles } from '@material-ui/core/styles'
 import { SubstrateContextProvider, useSubstrate } from './substrate-lib';
 import { DeveloperConsole } from './substrate-lib/components';
 
+import Header from './containers/Header'
 import Role from './containers/Role'
 import Fight from './containers/Fight'
 import Precious from './containers/Precious'
 import ClientInfo from './containers/ClientInfo'
 import Server from './containers/Server'
 import ServerInfo from './containers/ServerInfo'
-
-import AccountSelector from './AccountSelector';
-import Balances from './Balances';
-import BlockNumber from './BlockNumber';
-import Events from './Events';
-import Interactor from './Interactor';
-import Metadata from './Metadata';
-import NodeInfo from './NodeInfo';
-import TemplateModule from './TemplateModule';
-import Transfer from './Transfer';
-import Upgrade from './Upgrade';
+import { Link } from 'react-router-dom'
 
 const testKeyring = require('@polkadot/keyring/testing')
 
@@ -49,7 +40,7 @@ const useStyles = makeStyles(theme => ({
   },
   role: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     width: '50%',
     border: '1px solid gray',
   },
@@ -61,14 +52,15 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+const defaultKeyrings = testKeyring.createTestKeyring({ type: 'sr25519' })
+const pairs = defaultKeyrings.getPairs()
+const alice = pairs.find(one => one.meta.name === 'alice')
+const bob = pairs.find(one => one.meta.name === 'bob')
+const queryAsset = [[0, alice.address], [1, alice.address], [2, alice.address], [3, alice.address]]
+
 function Main() {
   const classes = useStyles()
-  const [accountAddress, setAccountAddress] = useState(null);
-  const { apiState, keyring, keyringState, apiError } = useSubstrate();
-  const accountPair =
-    accountAddress &&
-    keyringState === 'READY' &&
-    keyring.getPair(accountAddress);
+  const { apiState, keyringState, apiError } = useSubstrate();
 
   const loader = text =>
     <Dimmer active>
@@ -100,12 +92,20 @@ function Main() {
         <div className={classes.root}>
           <div className={classes.client}>
             <div className={classes.role}>
+              <Header />
               <Switch>
                 <Route path="/role" component={() => <Role />} />
-                <Route path="/fight" component={Fight} />
+                <Route path="/fight" component={() => <Fight />} />
                 <Route path="/precious" component={Precious} />
                 <Route path="/" component={Role} />
               </Switch>
+
+              <div style={{ height: '40px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Link to={`/role`} className={classes.link}>角色</Link>
+                <Link to={`/fight`} className={classes.link}>历练</Link>
+                <Link to={`/precious`} className={classes.link}>炼宝</Link>
+              </div>
+
             </div>
             <div className={classes.info}>
               <ClientInfo />
