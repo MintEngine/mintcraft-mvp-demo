@@ -14,9 +14,8 @@ import Header from './containers/Header'
 import Role from './containers/Role'
 import Fight from './containers/Fight'
 import Precious from './containers/Precious'
-import ClientInfo from './containers/ClientInfo'
 import Server from './containers/Server'
-import ServerInfo from './containers/ServerInfo'
+import LogInfo from './containers/LogInfo'
 import { Link } from 'react-router-dom'
 
 const testKeyring = require('@polkadot/keyring/testing')
@@ -50,6 +49,11 @@ const useStyles = makeStyles(theme => ({
     width: '50%',
     border: '1px solid gray',
   },
+  link: {
+    border: '1px solid gray',
+    padding: '12px',
+    borderRadius: '200%',
+  }
 }))
 
 const defaultKeyrings = testKeyring.createTestKeyring({ type: 'sr25519' })
@@ -100,7 +104,7 @@ function Main() {
                 <Route path="/" component={Role} />
               </Switch>
 
-              <div style={{ height: '40px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <div style={{ height: '60px', display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
                 <Link to={`/role`} className={classes.link}>角色</Link>
                 <Link to={`/fight`} className={classes.link}>历练</Link>
                 <Link to={`/precious`} className={classes.link}>炼宝</Link>
@@ -108,7 +112,7 @@ function Main() {
 
             </div>
             <div className={classes.info}>
-              <ClientInfo />
+              <LogInfo account={alice} />
             </div>
 
           </div>
@@ -117,7 +121,7 @@ function Main() {
               <Server />
             </div>
             <div className={classes.info}>
-              <ServerInfo />
+              <LogInfo account={bob} />
             </div>
           </div>
         </div>

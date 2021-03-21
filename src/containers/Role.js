@@ -38,13 +38,21 @@ export default function Main(props) {
   return (
     <div style={{
       minHeight: '40vh', borderTop: '1px solid gray', borderBottom: '1px solid gray',
-      background: 'gray', display: 'flex', flexDirection: 'column'
+      background: '#ddd', display: 'flex', flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
     }}>
       {
         roleAttr.length > 0 &&
         roleAttr.map((o, index) => {
           return (
-            <div key={index} style={{ display: 'flex', flexDirection: 'row' }}>
+            <div key={index} style={{
+              display: 'flex', flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: '20px',
+              width: '180px', height: '40px', cursor: 'pointer', border: '2px solid black'
+            }}>
               <div>Asset{index}:&nbsp;&nbsp;</div>
               <div>{o.balance}</div>
             </div>

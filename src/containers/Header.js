@@ -98,15 +98,15 @@ export default function Main(props) {
       <div className={classes.client}>
         <div className={classes.role}>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ marginLeft: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <div>角色名:&nbsp;&nbsp;</div>
               <div>{roleName}</div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ marginRight: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <div>&nbsp;&nbsp;元宝:&nbsp;&nbsp;</div>
               <div>{balance}</div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
+            {/* <div style={{ display: 'flex', flexDirection: 'row' }}>
               <h2>&nbsp;&nbsp;装备:&nbsp;&nbsp;</h2>
               {
                 equip && equip.length > 0 &&
@@ -116,7 +116,7 @@ export default function Main(props) {
                   )
                 })
               }
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

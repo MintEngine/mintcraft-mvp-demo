@@ -16,11 +16,11 @@ const useStyles = makeStyles(theme => ({
   },
   noselect: {
     "-webkit-touch-callout": "none", /* iOS Safari */
-      "-webkit-user-select": "none", /* Safari */
-       "-khtml-user-select": "none", /* Konqueror HTML */
-         "-moz-user-select": "none", /* Old versions of Firefox */
-          "-ms-user-select": "none", /* Internet Explorer/Edge */
-              "user-select": "none", /* Non-prefixed version, currently
+    "-webkit-user-select": "none", /* Safari */
+    "-khtml-user-select": "none", /* Konqueror HTML */
+    "-moz-user-select": "none", /* Old versions of Firefox */
+    "-ms-user-select": "none", /* Internet Explorer/Edge */
+    "user-select": "none", /* Non-prefixed version, currently
                                     supported by Chrome, Edge, Opera and Firefox */
   }
 }))
@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
 const defaultKeyrings = testKeyring.createTestKeyring({ type: 'sr25519' })
 const pairs = defaultKeyrings.getPairs()
 const alice = pairs.find(one => one.meta.name === 'alice')
+const bob = pairs.find(one => one.meta.name === 'bob')
 
 const Timer = props => {
   const [seconds, setSeconds] = useState(props.fullTime);
@@ -55,7 +56,7 @@ const Timer = props => {
   }
 
   return (
-    <div className="noselect" style={{cursor: 'pointer', userSelect: 'none'}}>
+    <div className="noselect" style={{ cursor: 'pointer', userSelect: 'none' }}>
       <div className="time">
         Time Left: {seconds}s
       </div>
@@ -81,6 +82,7 @@ export default function Fight(props) {
   // 用户点击关卡会首先进入游戏准备中
   const [status, setStatus] = useState('not-start')
 
+  const [ticket, setTicket] = useState('')
   // // 游戏准备中后会请求server发送start命令，server发送完成后会通知Flight组建，此时将状态设置为游戏开始
   // const [gameStatus, setGateStatus] = useState(false)
   // // 游戏开始后启动定时器，检查是否成功或者失败，然后通知server发送游戏end事件
@@ -90,9 +92,9 @@ export default function Fight(props) {
   useEffect(() => {
     // 收到server发过来的dungeons start信息
     EventUtil.addListener(Fight, 'game_start', result => {
-      console.log('------')
       console.log('game server has sent game start command')
       setStatus('gaming')
+      setTicket(result[3])
     })
   }, [])
 
@@ -119,8 +121,31 @@ export default function Fight(props) {
   }
 
   const setResult = result => {
-    console.log('---------')
-    console.log(result)
+    try {
+      const subscription = api.tx.dungeons
+        .end(ticket, result === true ? 'PerfectWin' : 'Lose')
+        .signAndSend(bob, ({ events = [], status }) => {
+          if (status.isInBlock) {
+            events.forEach(({ phase, event: { data, method, section } }) => {
+              if (section === 'dungeons' && method === 'DungeonEnded') {
+                let newInfo = data.toJSON()
+                // EventUtil.emit('game_start', result)
+                let info = [
+                  '<div>Player start game:</div>',
+                  `<div>Address: ${newInfo[1]}</div>`,
+                  `<div>Ticket number: ${newInfo[3]}</div>`,
+                  `<div>Server Address: ${newInfo[2]}</div>`,
+                  `<div>Game Result: ${newInfo[4] == 100 ? 'Perfect Win' : 'Lose'}</div>`
+                ]
+                EventUtil.emit('game_end', info)
+              }
+            });
+            // subscription();
+          }
+        })
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   // useEffect(() => {
@@ -164,7 +189,7 @@ export default function Fight(props) {
   return (
     <div style={{
       minHeight: '40vh', borderTop: '1px solid gray', borderBottom: '1px solid gray',
-      background: 'gray', display: 'flex', flexDirection: 'column',
+      background: '#ddd', display: 'flex', flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center'
     }}>

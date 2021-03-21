@@ -23,11 +23,10 @@ const bob = pairs.find(one => one.meta.name === 'bob')
 
 export default function Server(props) {
   const classes = useStyles()
-  const { api, keyring } = useSubstrate();
-  const [ticket, setTicket] = useState('')
+  const { api } = useSubstrate();
   const [content, setContent] = useState('')
-  const [server, setServer] = useState('')
 
+  // 服务端启动dungeons start事件
   const serverRoll = result => {
     try {
       const subscription = api.tx.dungeons
@@ -37,12 +36,12 @@ export default function Server(props) {
             events.forEach(({ phase, event: { data, method, section } }) => {
               if (section === 'dungeons' && method === 'DungeonStarted') {
                 let newInfo = data.toJSON()
-                EventUtil.emit('game_start', result)
+                EventUtil.emit('game_start', newInfo)
                 let info = [
                   '<div>Player start game:</div>',
-                  `<div>Address: ${result[1]}</div>`,
-                  `<div>Ticket number: ${result[2]}</div>`,
-                  `<div>Server kick ball: ${newInfo[3]}</div>`
+                  `<div>Address: ${newInfo[1]}</div>`,
+                  `<div>Ticket number: ${newInfo[3]}</div>`,
+                  `<div>Server Address: ${newInfo[2]}</div>`
                 ]
                 setContent(info.join('\n'))
               }
@@ -55,6 +54,7 @@ export default function Server(props) {
     }
   }
 
+  // 服务端监听ticket bought事件，若接收到激活server roll
   useEffect(() => {
     EventUtil.addListener(Server, 'ticket_bought', result => {
       console.log('server receive ticket bought event')
@@ -67,6 +67,15 @@ export default function Server(props) {
       setContent(info.join('\n'))
       console.log(content)
       serverRoll(result)
+    })
+  }, [Server])
+
+  // 服务端监听game end事件，若接收到打印结果
+  useEffect(() => {
+    EventUtil.addListener(Server, 'game_end', result => {
+      console.log('server receive game end event')
+      console.log(result)
+      setContent(result.join('\n'))
     })
   }, [Server])
 
