@@ -177,6 +177,8 @@ export default function Fight(props) {
             events.forEach(({ phase, event: { data, method, section } }) => {
               if (section === 'dungeons' && method === 'DungeonTicketBought') {
                 let result = data.toJSON()
+                console.log('xxxxx123456')
+                console.log(result)
                 // 用户买完票以后告诉server
                 EventUtil.emit('ticket_bought', result)
               }
