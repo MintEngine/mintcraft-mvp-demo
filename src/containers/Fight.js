@@ -126,6 +126,8 @@ export default function Fight(props) {
         .end(ticket, result === true ? 'PerfectWin' : 'Lose')
         .signAndSend(bob, ({ events = [], status }) => {
           if (status.isInBlock) {
+            EventUtil.emit('server_events', { hex: status.asInBlock.toHex(), action: 'end_dungeon', type: 'server' })
+
             events.forEach(({ phase, event: { data, method, section } }) => {
               if (section === 'dungeons' && method === 'DungeonEnded') {
                 let newInfo = data.toJSON()
@@ -171,6 +173,7 @@ export default function Fight(props) {
         .buyTicket(l)
         .signAndSend(alice, ({ events = [], status }) => {
           if (status.isInBlock) {
+            EventUtil.emit('client_events', { hex: status.asInBlock.toHex(), action: 'buy_dungeon_ticket', type: 'client' })
             events.forEach(({ phase, event: { data, method, section } }) => {
               if (section === 'dungeons' && method === 'DungeonTicketBought') {
                 let result = data.toJSON()

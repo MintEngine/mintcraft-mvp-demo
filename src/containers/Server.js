@@ -33,6 +33,8 @@ export default function Server(props) {
         .start(result[2])
         .signAndSend(bob, ({ events = [], status }) => {
           if (status.isInBlock) {
+            EventUtil.emit('server_events', { hex: status.asInBlock.toHex(), action: 'start_dungeon', type: 'server' })
+
             events.forEach(({ phase, event: { data, method, section } }) => {
               if (section === 'dungeons' && method === 'DungeonStarted') {
                 let newInfo = data.toJSON()
@@ -57,15 +59,12 @@ export default function Server(props) {
   // 服务端监听ticket bought事件，若接收到激活server roll
   useEffect(() => {
     EventUtil.addListener(Server, 'ticket_bought', result => {
-      console.log('server receive ticket bought event')
       let info = [
         '<div>Player start game:</div>',
         `<div>Address: ${result[1]}</div>`,
         `<div>Ticket number: ${result[2]}</div>`
       ]
-      console.log(info)
       setContent(info.join('\n'))
-      console.log(content)
       serverRoll(result)
     })
   }, [Server])
@@ -73,8 +72,7 @@ export default function Server(props) {
   // 服务端监听game end事件，若接收到打印结果
   useEffect(() => {
     EventUtil.addListener(Server, 'game_end', result => {
-      console.log('server receive game end event')
-      console.log(result)
+      // console.log('server receive game end event')
       setContent(result.join('\n'))
     })
   }, [Server])
@@ -82,6 +80,8 @@ export default function Server(props) {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column',
+      marginTop: '4px',
+      marginLeft: '4px'
     }}
       dangerouslySetInnerHTML={{ __html: content }}
     />

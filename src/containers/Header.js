@@ -106,8 +106,8 @@ export default function Main(props) {
               <div>&nbsp;&nbsp;元宝:&nbsp;&nbsp;</div>
               <div>{balance}</div>
             </div>
-            {/* <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <h2>&nbsp;&nbsp;装备:&nbsp;&nbsp;</h2>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <div>&nbsp;&nbsp;装备:&nbsp;&nbsp;</div>
               {
                 equip && equip.length > 0 &&
                 equip.map((o, index) => {
@@ -116,7 +116,7 @@ export default function Main(props) {
                   )
                 })
               }
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

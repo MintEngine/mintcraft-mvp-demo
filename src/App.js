@@ -112,7 +112,7 @@ function Main() {
 
             </div>
             <div className={classes.info}>
-              <LogInfo account={alice} />
+              <LogInfo account={alice} event={'client_events'} />
             </div>
 
           </div>
@@ -121,7 +121,7 @@ function Main() {
               <Server />
             </div>
             <div className={classes.info}>
-              <LogInfo account={bob} />
+              <LogInfo account={bob} event={'server_events'} />
             </div>
           </div>
         </div>
